@@ -4,7 +4,10 @@
 
 <p *ngIf="!forecasts?.length"><em>Loading...</em></p>
 
-<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="forecasts.length">
+<table
+  class="table table-striped"
+  aria-labelledby="tableLabel"
+  *ngIf="forecasts.length">
   <thead>
     <tr>
       <th>Date</th>
