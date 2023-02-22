@@ -18,7 +18,6 @@ import { ModifyDataComponent } from "./modify-data/modify-data.component";
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    ModifyDataComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
