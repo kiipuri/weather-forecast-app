@@ -8,7 +8,7 @@
       type="button"
       class="btn-close"
       aria-label="Close"
-      (click)="modal.dismiss('Cross click')"></button>
+      (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body">
     <form>
@@ -25,7 +25,6 @@
         <input
           type="number"
           name="rain"
-          value=""
           class="form-control"
           [(ngModel)]="weather.rain" />
       </div>
@@ -34,19 +33,18 @@
         <input
           type="number"
           name="wind"
-          value=""
           class="form-control"
           [(ngModel)]="weather.wind" />
       </div>
       <div class="mb-1 input-group">
         <label for="date" class="input-group-text">Date</label>
         <input
-          id="dateOfBirth"
           class="form-control"
           placeholder="yyyy-mm-dd"
           name="dp"
           ngbDatepicker
-          #dp="ngbDatepicker" />
+          #dp="ngbDatepicker"
+          [(ngModel)]="weather.date" />
         <button
           class="btn btn-outline-secondary bi bi-calendar3"
           (click)="dp.toggle()"
@@ -58,17 +56,15 @@
     <button
       type="button"
       class="btn btn-outline-dark"
-      (click)="modal.close('Save click')">
+      (click)="modal.close()">
       Save
     </button>
   </div>
 </ng-template>
-<button class="btn btn-lg btn-outline-primary" (click)="open(content)">
-  Add a forecast
-</button>
 <table
-  class="table table-striped"
+  class="table table-striped w-auto"
   aria-labelledby="tableLabel"
+  style="width: 100%"
   *ngIf="forecasts.length">
   <thead>
     <tr>
@@ -76,14 +72,89 @@
       <th>Temperature</th>
       <th>Rain</th>
       <th>Wind</th>
+      <th></th>
     </tr>
   </thead>
+
   <tbody>
     <tr *ngFor="let forecast of forecasts">
       <td>{{ forecast.date }}</td>
       <td>{{ forecast.temperature }}</td>
       <td>{{ forecast.rain }}</td>
       <td>{{ forecast.wind }}</td>
+      <td>
+        <button class="btn btn-primary" (click)="editForecast(forecast, editmodal)">
+          Edit
+        </button>
+        /
+        <button class="btn btn-danger" (click)="deleteForecast(forecast)">Delete</button>
+      </td>
     </tr>
   </tbody>
 </table>
+
+<ng-template #editmodal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      Edit a weather forecast
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-1 input-group">
+        <label for="temperate" class="input-group-text">Temperature</label>
+        <input
+          type="number"
+          name="temperature"
+          [(ngModel)]="weather.temperature"
+          class="form-control" />
+      </div>
+      <div class="mb-1 input-group">
+        <label for="rain" class="input-group-text">Rain</label>
+        <input
+          type="number"
+          name="rain"
+          class="form-control"
+          [(ngModel)]="weather.rain" />
+      </div>
+      <div class="mb-1 input-group">
+        <label for="wind" class="input-group-text">Wind</label>
+        <input
+          type="number"
+          name="wind"
+          class="form-control"
+          [(ngModel)]="weather.wind" />
+      </div>
+      <div class="mb-1 input-group">
+        <label for="date" class="input-group-text">Date</label>
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="dp"
+          ngbDatepicker
+          #dp="ngbDatepicker"
+          [(ngModel)]="weather.date" />
+        <button
+          class="btn btn-outline-secondary bi bi-calendar3"
+          (click)="dp.toggle()"
+          type="button"></button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="modal.close()">
+      Save
+    </button>
+  </div>
+</ng-template>
+<button class="btn btn-lg btn-outline-primary" (click)="open(content)">
+  Add a forecast
+</button>
