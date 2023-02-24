@@ -26,4 +26,26 @@ public class WeatherController : ControllerBase
         this.context.SaveChanges();
         return Ok();
     }
+
+    [HttpPut]
+    public StatusCodeResult Put([FromBody] Weather weather)
+    {
+        this.context.Update(weather);
+        this.context.SaveChanges();
+        return Ok();
+    }
+
+    [Route("Delete/{id}")]
+    [HttpDelete]
+    public StatusCodeResult Delete(int id)
+    {
+        var weather = this.context.Weathers.Find(id);
+        if (weather == null)
+        {
+            return NotFound();
+        }
+        this.context.Weathers.Remove(weather);
+        this.context.SaveChanges();
+        return Ok();
+    }
 }
