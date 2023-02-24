@@ -8,7 +8,6 @@ import { AppComponent } from "./app.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { HomeComponent } from "./home/home.component";
 import { CounterComponent } from "./counter/counter.component";
-import { FetchDataComponent } from "./fetch-data/fetch-data.component";
 import { ModifyDataComponent } from "./modify-data/modify-data.component";
 
 @NgModule({
@@ -17,7 +16,6 @@ import { ModifyDataComponent } from "./modify-data/modify-data.component";
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
-    FetchDataComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
@@ -26,7 +24,6 @@ import { ModifyDataComponent } from "./modify-data/modify-data.component";
     RouterModule.forRoot([
       { path: "", component: HomeComponent, pathMatch: "full" },
       { path: "counter", component: CounterComponent },
-      { path: "fetch-data", component: FetchDataComponent },
       { path: "modify-data", component: ModifyDataComponent },
     ]),
   ],
