@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_angular;
@@ -9,6 +10,9 @@ public class Weather
     public int Rain { get; set; }
     public int Wind { get; set; }
     public string Date { get; set; } = String.Empty;
+    public int LocationId { get; set; }
+    [ForeignKey("LocationId")]
+    public Location Location { get; set; } = new Location();
 }
 
 public class WeatherContext : DbContext
@@ -16,6 +20,7 @@ public class WeatherContext : DbContext
     public WeatherContext(DbContextOptions<WeatherContext> options) : base(options) { }
 
     public DbSet<Weather> Weathers => Set<Weather>();
+    public DbSet<Location> Locations => Set<Location>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

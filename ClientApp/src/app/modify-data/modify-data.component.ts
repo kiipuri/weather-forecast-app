@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { CustomDateParserFormatter } from "../date-parser-formatter";
@@ -9,13 +9,15 @@ import {
   NgbDateParserFormatter,
   NgbDatepickerModule,
   NgbModal,
+  NgbDropdownModule,
 } from "@ng-bootstrap/ng-bootstrap";
 import { CommonModule } from "@angular/common";
+import { Weather, Location } from "../classes";
 
 @Component({
   selector: "app-modify-data-component",
   standalone: true,
-  imports: [NgbDatepickerModule, FormsModule, CommonModule],
+  imports: [NgbDatepickerModule, FormsModule, CommonModule, NgbDropdownModule],
   providers: [
     { provide: NgbDateAdapter, useClass: CustomDateAdapter },
     { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
@@ -27,6 +29,7 @@ export class ModifyDataComponent {
   baseUrl = "";
   weather: Weather = new Weather();
   forecasts: Weather[] = [];
+  locations: Location[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -35,6 +38,7 @@ export class ModifyDataComponent {
   ) {
     this.baseUrl = baseUrl;
     this.getForecasts();
+    this.getLocations();
   }
 
   open(content: any) {
@@ -66,6 +70,20 @@ export class ModifyDataComponent {
     });
   }
 
+  getLocations() {
+    this.http.get<Location[]>(this.baseUrl + "location").subscribe({
+      next: res => {
+        this.locations = res;
+        console.log(res);
+      },
+    });
+  }
+
+  setLocation(location: Location) {
+    this.weather.locationId = location.id;
+    this.weather.location = location;
+  }
+
   editForecast(weather: Weather, editmodal: any) {
     Object.assign(this.weather, weather);
     this.modalService.open(editmodal).result.then(
@@ -91,12 +109,4 @@ export class ModifyDataComponent {
         },
       });
   }
-}
-
-class Weather {
-  id: number = 0;
-  temperature: number = 0;
-  rain: number = 0;
-  wind: number = 0;
-  date: string = "";
 }

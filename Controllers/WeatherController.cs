@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_angular.Controllers;
 
@@ -15,14 +16,23 @@ public class WeatherController : ControllerBase
     [HttpGet]
     public List<Weather> Get()
     {
-        var forecasts = this.context.Weathers.ToList();
+        var forecasts = this.context.Weathers.Include(x => x.Location).ToList();
         return forecasts;
     }
 
     [HttpPost]
     public StatusCodeResult Post([FromBody] Weather weather)
     {
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(weather));
+        Console.WriteLine(weather.LocationId);
+        var location = this.context.Locations.Find(weather.LocationId);
+        if (location == null)
+        {
+            return NotFound();
+        }
+        weather.Location = location;
         this.context.Weathers.Add(weather);
+
         this.context.SaveChanges();
         return Ok();
     }

@@ -50,13 +50,21 @@
           (click)="dp.toggle()"
           type="button"></button>
       </div>
+      <div class="mb-1 input-group">
+        <label for="location" class="input-group-text">City</label>
+        <div name="location" ngbDropdown class="form-control">
+          <div type="button" style="" class="" ngbDropdownToggle>{{ weather.location.city }}</div>
+          <div ngbDropdownMenu>
+            <button ngbDropdownItem *ngFor="let location of locations" (click)="setLocation(location)">
+              {{ location.city }}
+            </button>
+          </div>
+        </div>
+      </div>
     </form>
   </div>
   <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline-dark"
-      (click)="modal.close()">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">
       Save
     </button>
   </div>
@@ -72,6 +80,7 @@
       <th>Temperature</th>
       <th>Rain</th>
       <th>Wind</th>
+      <th>City</th>
       <th></th>
     </tr>
   </thead>
@@ -82,12 +91,17 @@
       <td>{{ forecast.temperature }}</td>
       <td>{{ forecast.rain }}</td>
       <td>{{ forecast.wind }}</td>
+      <td>{{ forecast.location.city }}</td>
       <td>
-        <button class="btn btn-primary" (click)="editForecast(forecast, editmodal)">
+        <button
+          class="btn btn-primary"
+          (click)="editForecast(forecast, editmodal)">
           Edit
         </button>
         /
-        <button class="btn btn-danger" (click)="deleteForecast(forecast)">Delete</button>
+        <button class="btn btn-danger" (click)="deleteForecast(forecast)">
+          Delete
+        </button>
       </td>
     </tr>
   </tbody>
@@ -95,9 +109,7 @@
 
 <ng-template #editmodal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">
-      Edit a weather forecast
-    </h4>
+    <h4 class="modal-title" id="modal-basic-title">Edit a weather forecast</h4>
     <button
       type="button"
       class="btn-close"
@@ -144,13 +156,21 @@
           (click)="dp.toggle()"
           type="button"></button>
       </div>
+      <div class="mb-1 input-group">
+        <label for="location" class="input-group-text">City</label>
+        <div name="location" ngbDropdown class="form-control">
+          <div type="button" style="" class="" ngbDropdownToggle>{{ weather.location.city }}</div>
+          <div ngbDropdownMenu>
+            <button ngbDropdownItem *ngFor="let location of locations" (click)="setLocation(location)">
+              {{ location.city }}
+            </button>
+          </div>
+        </div>
+      </div>
     </form>
   </div>
   <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline-dark"
-      (click)="modal.close()">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">
       Save
     </button>
   </div>
