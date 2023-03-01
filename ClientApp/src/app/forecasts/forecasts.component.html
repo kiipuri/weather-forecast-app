@@ -1,0 +1,51 @@
+<h1>Forecasts</h1>
+<canvas
+  baseChart
+  class="chart"
+  [data]="data"
+  [options]="barChartOptions"
+  [type]="'bar'"
+  (chartHover)="chartHovered($event)"
+  (chartClick)="chartClicked($event)">
+</canvas>
+<div ngbDropdown>
+  <button type="button" class="btn btn-primary" ngbDropdownToggle>
+    {{ location.city }}
+  </button>
+  <div ngbDropdownMenu>
+    <button
+      ngbDropdownItem
+      *ngFor="let _location of locations"
+      (click)="setFilterLocation(_location)">
+      {{ _location.city }}
+    </button>
+  </div>
+</div>
+<div class="mb-1 input-group">
+  <label for="date" class="input-group-text">Start date</label>
+  <input
+    class="form-control"
+    placeholder="yyyy-mm-dd"
+    name="dpStart"
+    ngbDatepicker
+    #dpStart="ngbDatepicker"
+    [(ngModel)]="dateStart" />
+  <button
+    class="btn btn-outline-secondary bi bi-calendar3"
+    (click)="dpStart.toggle()"
+    type="button"></button>
+</div>
+<div class="mb-1 input-group">
+  <label for="date" class="input-group-text">End date</label>
+  <input
+    class="form-control"
+    placeholder="yyyy-mm-dd"
+    name="dpEnd"
+    ngbDatepicker
+    #dpEnd="ngbDatepicker"
+    [(ngModel)]="dateEnd" />
+  <button
+    class="btn btn-outline-secondary bi bi-calendar3"
+    (click)="dpEnd.toggle()"
+    type="button"></button>
+</div>

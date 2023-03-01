@@ -16,7 +16,15 @@ public class WeatherController : ControllerBase
     [HttpGet]
     public List<Weather> Get()
     {
-        var forecasts = this.context.Weathers.Include(x => x.Location).ToList();
+        var forecasts = this.context.Weathers.Include(f => f.Location).OrderBy(f => f.Date).ToList();
+        return forecasts;
+    }
+
+    [Route("Location/{location}")]
+    [HttpGet]
+    public List<Weather> Get(string location)
+    {
+        var forecasts = this.context.Weathers.Include(f => f.Location).Where(f => f.Location.City == location).OrderBy(f => f.Date).ToList();
         return forecasts;
     }
 

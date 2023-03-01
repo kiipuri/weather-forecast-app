@@ -9,6 +9,7 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { HomeComponent } from "./home/home.component";
 import { CounterComponent } from "./counter/counter.component";
 import { ModifyDataComponent } from "./modify-data/modify-data.component";
+import { ForecastsComponent } from "./forecasts/forecasts.component";
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ModifyDataComponent } from "./modify-data/modify-data.component";
       { path: "", component: HomeComponent, pathMatch: "full" },
       { path: "counter", component: CounterComponent },
       { path: "modify-data", component: ModifyDataComponent },
+      { path: "forecasts", component: ForecastsComponent },
     ]),
   ],
   providers: [],
