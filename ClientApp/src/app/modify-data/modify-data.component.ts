@@ -1,5 +1,5 @@
-import { Component, Inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { Component, Inject, ViewChild } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { CustomDateParserFormatter } from "../date-parser-formatter";
 import { CustomDateAdapter } from "../date-parser-formatter";
@@ -10,6 +10,8 @@ import {
   NgbDatepickerModule,
   NgbModal,
   NgbDropdownModule,
+  NgbAlertModule,
+  NgbAlert,
 } from "@ng-bootstrap/ng-bootstrap";
 import { CommonModule } from "@angular/common";
 import { Weather, Location } from "../classes";
@@ -17,7 +19,13 @@ import { Weather, Location } from "../classes";
 @Component({
   selector: "app-modify-data-component",
   standalone: true,
-  imports: [NgbDatepickerModule, FormsModule, CommonModule, NgbDropdownModule],
+  imports: [
+    NgbDatepickerModule,
+    FormsModule,
+    CommonModule,
+    NgbDropdownModule,
+    NgbAlertModule,
+  ],
   providers: [
     { provide: NgbDateAdapter, useClass: CustomDateAdapter },
     { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
@@ -30,6 +38,10 @@ export class ModifyDataComponent {
   weather: Weather = new Weather();
   forecasts: Weather[] = [];
   locations: Location[] = [];
+  newLocation: string = "";
+
+  cantDelete: boolean = false;
+  cantAdd: boolean = false;
 
   constructor(
     private modalService: NgbModal,
@@ -74,7 +86,6 @@ export class ModifyDataComponent {
     this.http.get<Location[]>(this.baseUrl + "location").subscribe({
       next: res => {
         this.locations = res;
-        console.log(res);
       },
     });
   }
@@ -106,6 +117,47 @@ export class ModifyDataComponent {
       .subscribe({
         next: () => {
           this.getForecasts();
+        },
+      });
+  }
+
+  deleteLocation(location: Location) {
+    this.http
+      .delete<Location>(this.baseUrl + "location/Delete/" + location.id)
+      .subscribe({
+        next: () => {
+          this.getLocations();
+        },
+        error: err => {
+          if (err.status === 400) {
+            this.cantDelete = true;
+          }
+        },
+      });
+  }
+
+  addLocation() {
+    if (this.newLocation === "") {
+      return;
+    }
+
+    const reqHeaders = new HttpHeaders().set(
+      "Content-Type",
+      "application/json"
+    );
+    this.http
+      .post(`${this.baseUrl}location/New/`, JSON.stringify(this.newLocation), {
+        headers: reqHeaders,
+      })
+      .subscribe({
+        next: () => {
+          this.newLocation = "";
+          this.getLocations();
+        },
+        error: err => {
+          if (err.status === 400) {
+            this.cantAdd = true;
+          }
         },
       });
   }

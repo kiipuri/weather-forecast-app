@@ -53,9 +53,14 @@
       <div class="mb-1 input-group">
         <label for="location" class="input-group-text">City</label>
         <div name="location" ngbDropdown class="form-control">
-          <div type="button" style="" class="" ngbDropdownToggle>{{ weather.location.city }}</div>
+          <div type="button" style="" class="" ngbDropdownToggle>
+            {{ weather.location.city }}
+          </div>
           <div ngbDropdownMenu>
-            <button ngbDropdownItem *ngFor="let location of locations" (click)="setLocation(location)">
+            <button
+              ngbDropdownItem
+              *ngFor="let location of locations"
+              (click)="setLocation(location)">
               {{ location.city }}
             </button>
           </div>
@@ -159,9 +164,14 @@
       <div class="mb-1 input-group">
         <label for="location" class="input-group-text">City</label>
         <div name="location" ngbDropdown class="form-control">
-          <div type="button" style="" class="" ngbDropdownToggle>{{ weather.location.city }}</div>
+          <div type="button" style="" class="" ngbDropdownToggle>
+            {{ weather.location.city }}
+          </div>
           <div ngbDropdownMenu>
-            <button ngbDropdownItem *ngFor="let location of locations" (click)="setLocation(location)">
+            <button
+              ngbDropdownItem
+              *ngFor="let location of locations"
+              (click)="setLocation(location)">
               {{ location.city }}
             </button>
           </div>
@@ -177,4 +187,44 @@
 </ng-template>
 <button class="btn btn-lg btn-outline-primary" (click)="open(content)">
   Add a forecast
+</button>
+<hr />
+<h1>Locations</h1>
+<ngb-alert [type]="'danger'" *ngIf="cantDelete" (closed)="cantDelete = false"
+  >A weather forecast with this location exists, you must delete it
+  first!</ngb-alert
+>
+<table
+  class="table table-striped w-auto"
+  aria-labelledby="tableLabel"
+  style="width: 100%"
+  *ngIf="locations.length">
+  <thead>
+    <tr>
+      <th>City</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let location of locations">
+      <td>{{ location.city }}</td>
+      <td>
+        <button class="btn btn-danger" (click)="deleteLocation(location)">
+          Delete
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h3>Add a new location</h3>
+<ngb-alert [type]="'danger'" *ngIf="cantAdd" (closed)="cantAdd = false"
+  >A location called {{ newLocation }} exists!</ngb-alert
+>
+<input
+  type="text"
+  class="form-control"
+  [(ngModel)]="newLocation"
+  placeholder="City" />
+<button class="btn btn-lg btn-outline-primary mt-2" (click)="addLocation()">
+  Add a location
 </button>
