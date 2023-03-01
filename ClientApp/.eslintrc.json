@@ -30,7 +30,7 @@
         ],
         "@angular-eslint/component-selector": [
           "error",
-          {
+         {
             "type": "element",
             "prefix": "app",
             "style": "kebab-case"
@@ -41,6 +41,14 @@
       }
     },
     {
+      "files": ["*.ts"],
+      "extends": ["plugin:prettier/recommended"],
+      "rules": {
+        "prettier/prettier": ["error"]
+      }
+    },
+    {
+      "plugins": ["prettier"],
       "files": ["*.html"],
       "excludedFiles": ["*inline-template-*.component.html"],
       "extends": ["plugin:prettier/recommended"],
