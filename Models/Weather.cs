@@ -9,7 +9,7 @@ public class Weather
     public int Temperature { get; set; }
     public int Rain { get; set; }
     public int Wind { get; set; }
-    public string Date { get; set; } = String.Empty;
+    public DateOnly Date { get; set; } = new DateOnly();
     public int LocationId { get; set; }
     [ForeignKey("LocationId")]
     public Location Location { get; set; } = new Location();
