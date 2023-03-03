@@ -1,4 +1,22 @@
 <h1>Forecasts</h1>
+<div class="position-relative w-50 mx-auto">
+  <input
+    type="text"
+    placeholder="Search city"
+    class="form-control"
+    [(ngModel)]="searchField"
+    (ngModelChange)="getResults()" />
+  <div class="list-group position-absolute w-100">
+    <div
+      [routerLink]="['/forecasts', result.city]"
+      style="cursor: pointer"
+      class="list-group-item width-100"
+      (click)="searchResults = []; searchField = ''"
+      *ngFor="let result of searchResults">
+      {{ result.city }}
+    </div>
+  </div>
+</div>
 <canvas
   baseChart
   class="chart"
@@ -8,19 +26,6 @@
   (chartHover)="chartHovered($event)"
   (chartClick)="chartClicked($event)">
 </canvas>
-<div ngbDropdown>
-  <button type="button" class="btn btn-primary" ngbDropdownToggle>
-    {{ location.city }}
-  </button>
-  <div ngbDropdownMenu>
-    <button
-      ngbDropdownItem
-      *ngFor="let _location of locations"
-      (click)="setFilterLocation(_location)">
-      {{ _location.city }}
-    </button>
-  </div>
-</div>
 <div class="mb-1 input-group">
   <label for="date" class="input-group-text">Start date</label>
   <input
@@ -49,3 +54,9 @@
     (click)="dpEnd.toggle()"
     type="button"></button>
 </div>
+<button
+  class="btn btn-primary"
+  [routerLink]="[]"
+  [queryParams]="{dateStart: dateStart, dateEnd: dateEnd}">
+  Get data
+</button>

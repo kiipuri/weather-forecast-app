@@ -8,12 +8,14 @@ import { ChartConfiguration, ChartData, ChartEvent } from "chart.js";
 import { CustomDateParserFormatter } from "../date-parser-formatter";
 import { CustomDateAdapter } from "../date-parser-formatter";
 import { NgChartsModule } from "ng2-charts";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
   NgbDropdownModule,
   NgbDatepickerModule,
   NgbDateAdapter,
   NgbDateParserFormatter,
 } from "@ng-bootstrap/ng-bootstrap";
+import { switchMap } from "rxjs";
 
 @Component({
   selector: "app-forecasts.component",
@@ -25,6 +27,7 @@ import {
     NgbDropdownModule,
     NgbDatepickerModule,
     FormsModule,
+    RouterModule,
   ],
   providers: [
     { provide: NgbDateAdapter, useClass: CustomDateAdapter },
@@ -32,16 +35,37 @@ import {
   ],
 })
 export class ForecastsComponent {
-  constructor(private http: HttpClient, @Inject("BASE_URL") baseUrl: string) {
+  constructor(
+    private http: HttpClient,
+    @Inject("BASE_URL") baseUrl: string,
+    private route: ActivatedRoute
+  ) {
     this.baseUrl = baseUrl;
-    this.getForecasts();
-    this.getLocations();
+
+    this.route.paramMap.subscribe(params => {
+      const city = params.get("city");
+      this.route.queryParams.subscribe(params => {
+        this.dateStart = params["dateStart"];
+        this.dateEnd = params["dateEnd"];
+        if (params["dateStart"] && params["dateEnd"] && city) {
+          this.getForecastsByDateAndLocation(city);
+        } else if (params["dateStart"] && params["dateEnd"]) {
+          this.getForecastsByDate();
+        } else if (city) {
+          this.getForecastsByLocation(city);
+        } else {
+          this.getForecasts();
+        }
+      });
+    });
   }
 
   baseUrl = "";
   forecasts: Weather[] = [];
   locations: Location[] = [];
   location: Location = new Location();
+  searchField: string = "";
+  searchResults: Location[] = [];
   dateStart: string = "";
   dateEnd: string = "";
   data: ChartData<"bar"> = {
@@ -52,41 +76,52 @@ export class ForecastsComponent {
     this.http.get<Weather[]>(this.baseUrl + "weather").subscribe({
       next: res => {
         this.forecasts = res;
-        this.setFilterByLocation();
+        this.updateChart();
       },
     });
   }
 
-  getForecastsByLocation() {
+  getForecastsByDateAndLocation(city: string) {
     this.http
-      .get<Weather[]>((this.baseUrl = "weather/Location/" + this.location.city))
+      .get<Weather[]>(
+        `${this.baseUrl}weather/Location/${city}?dateStart=${this.dateStart}&dateEnd=${this.dateEnd}`
+      )
       .subscribe({
         next: res => {
           this.forecasts = res;
-          this.data = {
-            datasets: [
-              {
-                data: this.forecasts.map(f => f.temperature),
-                label: "Temperature",
-              },
-              {
-                data: this.forecasts.map(f => f.wind),
-                label: "Wind",
-              },
-              {
-                data: this.forecasts.map(f => f.rain),
-                label: "Rain",
-              },
-            ],
-            labels: this.forecasts.map(f => `${f.date} ${f.location.city}`),
-          };
-
-          this.chart?.update();
+          this.updateChart();
         },
       });
   }
 
-  setFilterByLocation() {
+  getForecastsByLocation(city: string) {
+    this.http
+      .get<Weather[]>(`${this.baseUrl}weather/Location/${city}`)
+      .subscribe({
+        next: res => {
+          this.forecasts = res;
+          this.updateChart();
+        },
+      });
+  }
+
+  getForecastsByDate() {
+    this.http
+      .get<Weather[]>(`${this.baseUrl}weather/Location`, {
+        params: {
+          dateStart: this.dateStart,
+          dateEnd: this.dateEnd,
+        },
+      })
+      .subscribe({
+        next: res => {
+          this.forecasts = res;
+          this.updateChart();
+        },
+      });
+  }
+
+  updateChart() {
     this.data = {
       datasets: [
         {
@@ -106,50 +141,10 @@ export class ForecastsComponent {
     };
 
     this.chart?.update();
-    // switch (this.filter) {
-    //   case "Temperature":
-    //     this.data.datasets = [
-    //       {
-    //         data: this.forecasts.map(f => f.temperature),
-    //         label: this.filter,
-    //       },
-    //     ];
-    //     break;
-    //
-    //   case "Rain":
-    //     this.data.datasets = [
-    //       {
-    //         data: this.forecasts.map(f => f.rain),
-    //         label: this.filter,
-    //       },
-    //     ];
-    //     break;
-    //
-    //   case "Wind":
-    //     this.data.datasets = [
-    //       {
-    //         data: this.forecasts.map(f => f.wind),
-    //         label: this.filter,
-    //       },
-    //     ];
-    //     break;
-    //
-    //   default:
-    //     break;
-    // }
   }
 
   setFilterLocation(location: Location) {
     this.location = location;
-    this.getForecastsByLocation();
-  }
-
-  getLocations() {
-    this.http.get<Location[]>(this.baseUrl + "location").subscribe({
-      next: res => {
-        this.locations = res;
-      },
-    });
   }
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
@@ -182,5 +177,20 @@ export class ForecastsComponent {
     active?: {}[];
   }): void {
     // console.log(event, active);
+  }
+
+  getResults() {
+    if (this.searchField.length < 3) {
+      this.searchResults = [];
+      return;
+    }
+
+    this.http
+      .get<Location[]>(`${this.baseUrl}location/${this.searchField}`)
+      .subscribe({
+        next: res => {
+          this.searchResults = res;
+        },
+      });
   }
 }

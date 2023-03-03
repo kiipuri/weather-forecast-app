@@ -19,11 +19,25 @@ public class LocationController : ControllerBase
         return locations;
     }
 
+    [Route("{searchTerm}")]
+    [HttpGet]
+    public List<Location> Get(string searchTerm)
+    {
+        var locations = this.context.Locations
+            .Where(l => l.City
+                    .ToLower()
+                    .StartsWith(searchTerm.ToLower()))
+            .ToList();
+        return locations;
+    }
+
     [Route("New")]
     [HttpPost]
     public IActionResult Post([FromBody] string name)
     {
-        var existingLocation = this.context.Locations.Where(w => w.City == name).FirstOrDefault();
+        var existingLocation = this.context.Locations
+            .Where(l => l.City == name)
+            .FirstOrDefault();
         if (existingLocation != null)
         {
             return BadRequest();
@@ -46,7 +60,9 @@ public class LocationController : ControllerBase
             return NotFound();
         }
 
-        var weatherWithLocation = this.context.Weathers.Where(w => w.LocationId == id).FirstOrDefault();
+        var weatherWithLocation = this.context.Weathers
+            .Where(w => w.LocationId == id)
+            .FirstOrDefault();
         if (weatherWithLocation != null)
         {
             return BadRequest();

@@ -18,8 +18,18 @@ import { ForecastsComponent } from "./forecasts/forecasts.component";
     FormsModule,
     RouterModule.forRoot([
       { path: "", component: HomeComponent, pathMatch: "full" },
-      { path: "modify-data", component: ModifyDataComponent },
-      { path: "forecasts", component: ForecastsComponent },
+      {
+        path: "modify-data",
+        component: ModifyDataComponent,
+      },
+      {
+        path: "forecasts",
+        component: ForecastsComponent,
+      },
+      {
+        path: "forecasts/:city",
+        component: ForecastsComponent,
+      },
     ]),
   ],
   providers: [],
