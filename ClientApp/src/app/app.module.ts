@@ -30,6 +30,10 @@ import { ForecastsComponent } from "./forecasts/forecasts.component";
         path: "forecasts/:city",
         component: ForecastsComponent,
       },
+      {
+        path: "**",
+        redirectTo: "/",
+      },
     ]),
   ],
   providers: [],
