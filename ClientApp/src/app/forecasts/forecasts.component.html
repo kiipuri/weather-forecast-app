@@ -26,37 +26,40 @@
   (chartHover)="chartHovered($event)"
   (chartClick)="chartClicked($event)">
 </canvas>
-<div class="mb-1 input-group">
-  <label for="date" class="input-group-text">Start date</label>
-  <input
-    class="form-control"
-    placeholder="yyyy-mm-dd"
-    name="dpStart"
-    ngbDatepicker
-    #dpStart="ngbDatepicker"
-    [(ngModel)]="dateStart" />
+<div class="d-flex">
+  <div class="me-2 input-group">
+    <label for="date" class="input-group-text">Start date</label>
+    <input
+      class="form-control"
+      placeholder="yyyy-mm-dd"
+      name="dpStart"
+      ngbDatepicker
+      #dpStart="ngbDatepicker"
+      [(ngModel)]="dateStart" />
+    <button
+      class="btn btn-outline-secondary bi bi-calendar3"
+      (click)="dpStart.toggle()"
+      type="button"></button>
+  </div>
+  <div class="me-1 input-group">
+    <label for="date" class="input-group-text">End date</label>
+    <input
+      class="form-control"
+      placeholder="yyyy-mm-dd"
+      name="dpEnd"
+      ngbDatepicker
+      #dpEnd="ngbDatepicker"
+      [(ngModel)]="dateEnd" />
+    <button
+      class="btn btn-outline-secondary bi bi-calendar3"
+      (click)="dpEnd.toggle()"
+      type="button"></button>
+  </div>
   <button
-    class="btn btn-outline-secondary bi bi-calendar3"
-    (click)="dpStart.toggle()"
-    type="button"></button>
+    style="flex: 0 0 auto"
+    class="btn btn-primary"
+    [routerLink]="[]"
+    [queryParams]="{dateStart: dateStart, dateEnd: dateEnd}">
+    Get data
+  </button>
 </div>
-<div class="mb-1 input-group">
-  <label for="date" class="input-group-text">End date</label>
-  <input
-    class="form-control"
-    placeholder="yyyy-mm-dd"
-    name="dpEnd"
-    ngbDatepicker
-    #dpEnd="ngbDatepicker"
-    [(ngModel)]="dateEnd" />
-  <button
-    class="btn btn-outline-secondary bi bi-calendar3"
-    (click)="dpEnd.toggle()"
-    type="button"></button>
-</div>
-<button
-  class="btn btn-primary"
-  [routerLink]="[]"
-  [queryParams]="{dateStart: dateStart, dateEnd: dateEnd}">
-  Get data
-</button>
