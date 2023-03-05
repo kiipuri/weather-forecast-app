@@ -12,20 +12,20 @@ App to add, modify and visualize weather forecast data, built with ASP.NET and A
 ## Setup
 
 1. Setup PostgreSQL
-2. Install npm packages
+2. Update database connection string in appsettings.json
+3. Install npm packages
 ```bash
 cd ClientApp
 npm install
 ```
-3. Install Entity Framework Tools
+4. Install Entity Framework Tools
 ```bash
 dotnet tool install --global dotnet-ef
 ```
-4. Update database
+5. Update database
 ```bash
 dotnet ef database update
 ```
-5. Update database connection string in appsettings.json
 
 ## Running
 Run the app with `dotnet run`
