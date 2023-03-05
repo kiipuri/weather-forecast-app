@@ -6,28 +6,26 @@ import { RouterModule } from "@angular/router";
 
 import { AppComponent } from "./app.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
-import { HomeComponent } from "./home/home.component";
 import { ModifyDataComponent } from "./modify-data/modify-data.component";
 import { ForecastsComponent } from "./forecasts/forecasts.component";
 
 @NgModule({
-  declarations: [AppComponent, NavMenuComponent, HomeComponent],
+  declarations: [AppComponent, NavMenuComponent],
   imports: [
     BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: "", component: HomeComponent, pathMatch: "full" },
       {
         path: "modify-data",
         component: ModifyDataComponent,
       },
       {
-        path: "forecasts",
+        path: "",
         component: ForecastsComponent,
       },
       {
-        path: "forecasts/:city",
+        path: ":city",
         component: ForecastsComponent,
       },
       {

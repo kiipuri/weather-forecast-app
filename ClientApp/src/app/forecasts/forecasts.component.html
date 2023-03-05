@@ -8,7 +8,7 @@
     (ngModelChange)="getResults()" />
   <div class="list-group position-absolute w-100">
     <div
-      [routerLink]="['/forecasts', result.city]"
+      [routerLink]="['/', result.city]"
       style="cursor: pointer"
       class="list-group-item width-100"
       (click)="searchResults = []; searchField = ''"
