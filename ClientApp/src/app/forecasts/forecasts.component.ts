@@ -126,15 +126,15 @@ export class ForecastsComponent {
       datasets: [
         {
           data: this.forecasts.map(f => f.temperature),
-          label: "Temperature",
-        },
-        {
-          data: this.forecasts.map(f => f.wind),
-          label: "Wind",
+          label: "Temperature (°C)",
         },
         {
           data: this.forecasts.map(f => f.rain),
-          label: "Rain",
+          label: "Rain (mm)",
+        },
+        {
+          data: this.forecasts.map(f => f.wind),
+          label: "Wind (m/s)",
         },
       ],
       labels: this.forecasts.map(f => `${f.date} ${f.location.city}`),
@@ -151,33 +151,11 @@ export class ForecastsComponent {
 
   public barChartOptions: ChartConfiguration["options"] = {
     responsive: true,
-    // We use these empty structures as placeholders for dynamic theming.
     scales: {
       x: {},
       y: {},
     },
   };
-
-  // events
-  public chartClicked({
-    event,
-    active,
-  }: {
-    event?: ChartEvent;
-    active?: {}[];
-  }): void {
-    console.log(event, active);
-  }
-
-  public chartHovered({
-    event,
-    active,
-  }: {
-    event?: ChartEvent;
-    active?: {}[];
-  }): void {
-    // console.log(event, active);
-  }
 
   getResults() {
     if (this.searchField.length < 3) {
