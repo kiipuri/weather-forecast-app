@@ -26,3 +26,6 @@ dotnet tool install --global dotnet-ef
 dotnet ef database update
 ```
 5. Update database connection string in appsettings.json
+
+## Running
+Run the app with `dotnet run`
