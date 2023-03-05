@@ -2,7 +2,9 @@
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">
-      Add a new weather forecast
+      <ng-template *ngIf="!edit; then newText else editText"></ng-template>
+      <ng-template #editText>Edit a weather forecast</ng-template>
+      <ng-template #newText>Add a new weather forecast</ng-template>
     </h4>
     <button
       type="button"
@@ -11,9 +13,15 @@
       (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body">
+    <ngb-alert
+      [type]="'danger'"
+      *ngIf="setAllValues"
+      (closed)="setAllValues = false"
+      >You need to set all values!</ngb-alert
+    >
     <form>
       <div class="mb-1 input-group">
-        <label for="temperate" class="input-group-text">Temperature</label>
+        <label for="temperate" class="input-group-text">Temperature (°C)</label>
         <input
           type="number"
           name="temperature"
@@ -21,7 +29,7 @@
           class="form-control" />
       </div>
       <div class="mb-1 input-group">
-        <label for="rain" class="input-group-text">Rain</label>
+        <label for="rain" class="input-group-text">Rain (mm)</label>
         <input
           type="number"
           name="rain"
@@ -29,7 +37,7 @@
           [(ngModel)]="weather.rain" />
       </div>
       <div class="mb-1 input-group">
-        <label for="wind" class="input-group-text">Wind</label>
+        <label for="wind" class="input-group-text">Wind (m/s)</label>
         <input
           type="number"
           name="wind"
@@ -53,9 +61,7 @@
       <div class="mb-1 input-group">
         <label for="location" class="input-group-text">City</label>
         <div name="location" ngbDropdown class="form-control">
-          <div type="button" style="" class="" ngbDropdownToggle>
-            {{ weather.location.city }}
-          </div>
+          <div type="button" ngbDropdownToggle>{{ weather.location.city }}</div>
           <div ngbDropdownMenu>
             <button
               ngbDropdownItem
@@ -69,7 +75,16 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">
+    <ng-template *ngIf="edit; then deleteButton"></ng-template>
+    <ng-template #deleteButton>
+      <button type="button" class="btn btn-danger" (click)="deleteForecast()">
+        Delete
+      </button>
+    </ng-template>
+    <button
+      type="button"
+      class="btn btn-outline-primary"
+      (click)="saveForecast()">
       Save
     </button>
   </div>
@@ -77,127 +92,53 @@
 <table
   class="table table-striped w-auto"
   aria-labelledby="tableLabel"
-  style="width: 100%"
   *ngIf="forecasts.length">
   <thead>
     <tr>
       <th>Date</th>
-      <th>Temperature</th>
-      <th>Rain</th>
-      <th>Wind</th>
+      <th>Temperature (°C)</th>
+      <th>Rain (mm)</th>
+      <th>Wind (m/s)</th>
       <th>City</th>
-      <th></th>
     </tr>
   </thead>
-
   <tbody>
-    <tr *ngFor="let forecast of forecasts">
+    <tr
+      *ngFor="let forecast of forecasts"
+      style="cursor: pointer"
+      (click)="editForecast(forecast, content)">
       <td>{{ forecast.date }}</td>
       <td>{{ forecast.temperature }}</td>
       <td>{{ forecast.rain }}</td>
       <td>{{ forecast.wind }}</td>
       <td>{{ forecast.location.city }}</td>
-      <td>
-        <button
-          class="btn btn-primary"
-          (click)="editForecast(forecast, editmodal)">
-          Edit
-        </button>
-        /
-        <button class="btn btn-danger" (click)="deleteForecast(forecast)">
-          Delete
-        </button>
-      </td>
     </tr>
   </tbody>
 </table>
-
-<ng-template #editmodal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Edit a weather forecast</h4>
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="modal.dismiss()"></button>
-  </div>
-  <div class="modal-body">
-    <form>
-      <div class="mb-1 input-group">
-        <label for="temperate" class="input-group-text">Temperature</label>
-        <input
-          type="number"
-          name="temperature"
-          [(ngModel)]="weather.temperature"
-          class="form-control" />
-      </div>
-      <div class="mb-1 input-group">
-        <label for="rain" class="input-group-text">Rain</label>
-        <input
-          type="number"
-          name="rain"
-          class="form-control"
-          [(ngModel)]="weather.rain" />
-      </div>
-      <div class="mb-1 input-group">
-        <label for="wind" class="input-group-text">Wind</label>
-        <input
-          type="number"
-          name="wind"
-          class="form-control"
-          [(ngModel)]="weather.wind" />
-      </div>
-      <div class="mb-1 input-group">
-        <label for="date" class="input-group-text">Date</label>
-        <input
-          class="form-control"
-          placeholder="yyyy-mm-dd"
-          name="dp"
-          ngbDatepicker
-          #dp="ngbDatepicker"
-          [(ngModel)]="weather.date" />
-        <button
-          class="btn btn-outline-secondary bi bi-calendar3"
-          (click)="dp.toggle()"
-          type="button"></button>
-      </div>
-      <div class="mb-1 input-group">
-        <label for="location" class="input-group-text">City</label>
-        <div name="location" ngbDropdown class="form-control">
-          <div type="button" style="" class="" ngbDropdownToggle>
-            {{ weather.location.city }}
-          </div>
-          <div ngbDropdownMenu>
-            <button
-              ngbDropdownItem
-              *ngFor="let location of locations"
-              (click)="setLocation(location)">
-              {{ location.city }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">
-      Save
-    </button>
-  </div>
-</ng-template>
 <button class="btn btn-lg btn-outline-primary" (click)="open(content)">
   Add a forecast
 </button>
 <hr />
 <h1>Locations</h1>
 <ngb-alert [type]="'danger'" *ngIf="cantDelete" (closed)="cantDelete = false"
-  >A weather forecast with this location exists, you must delete it
+  >A weather forecast with that location exists, you must delete it
   first!</ngb-alert
 >
+<h3>Add a new location</h3>
+<ngb-alert [type]="'danger'" *ngIf="cantAdd" (closed)="cantAdd = false"
+  >A location with that name exists!</ngb-alert
+>
+<input
+  type="text"
+  class="form-control"
+  [(ngModel)]="newLocation"
+  placeholder="City" />
+<button class="btn btn-lg btn-outline-primary mt-2" (click)="addLocation()">
+  Add a location
+</button>
 <table
   class="table table-striped w-auto"
   aria-labelledby="tableLabel"
-  style="width: 100%"
   *ngIf="locations.length">
   <thead>
     <tr>
@@ -216,15 +157,3 @@
     </tr>
   </tbody>
 </table>
-<h3>Add a new location</h3>
-<ngb-alert [type]="'danger'" *ngIf="cantAdd" (closed)="cantAdd = false"
-  >A location called {{ newLocation }} exists!</ngb-alert
->
-<input
-  type="text"
-  class="form-control"
-  [(ngModel)]="newLocation"
-  placeholder="City" />
-<button class="btn btn-lg btn-outline-primary mt-2" (click)="addLocation()">
-  Add a location
-</button>

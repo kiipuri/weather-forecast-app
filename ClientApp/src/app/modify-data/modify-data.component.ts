@@ -12,6 +12,7 @@ import {
   NgbDropdownModule,
   NgbAlertModule,
   NgbAlert,
+  NgbModalRef,
 } from "@ng-bootstrap/ng-bootstrap";
 import { CommonModule } from "@angular/common";
 import { Weather, Location } from "../classes";
@@ -31,6 +32,7 @@ import { Weather, Location } from "../classes";
     { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
   ],
   templateUrl: "./modify-data.component.html",
+  styleUrls: ["./modify-data.component.css"],
 })
 export class ModifyDataComponent {
   closeResult = "";
@@ -39,7 +41,10 @@ export class ModifyDataComponent {
   forecasts: Weather[] = [];
   locations: Location[] = [];
   newLocation: string = "";
+  modalRef: NgbModalRef | null = null;
 
+  edit: boolean = false;
+  setAllValues: boolean = false;
   cantDelete: boolean = false;
   cantAdd: boolean = false;
 
@@ -55,23 +60,49 @@ export class ModifyDataComponent {
 
   open(content: any) {
     this.weather = new Weather();
-    this.modalService
-      .open(content, { ariaLabelledBy: "modal-basic-title" })
-      .result.then(
-        () => {
-          this.http
-            .post<Weather>(this.baseUrl + "weather", this.weather)
-            .subscribe({
-              next: () => {
-                this.getForecasts();
-              },
-              error: err => {
-                console.error(err);
-              },
-            });
+    this.edit = false;
+    this.modalRef = this.modalService.open(content);
+  }
+
+  checkEmpty(obj: any): boolean {
+    return Object.values(obj).some(o => {
+      if (o === null || o === "") {
+        return true;
+      }
+
+      if (typeof o === "object") {
+        return this.checkEmpty(o);
+      }
+
+      return false;
+    });
+  }
+
+  saveForecast() {
+    if (this.checkEmpty(this.weather)) {
+      this.setAllValues = true;
+      return;
+    }
+
+    if (this.edit) {
+      this.http.put<Weather>(this.baseUrl + "weather", this.weather).subscribe({
+        next: () => {
+          this.setAllValues = false;
+          this.getForecasts();
+          this.modalRef?.close();
         },
-        () => {}
-      );
+      });
+    } else {
+      this.http
+        .post<Weather>(this.baseUrl + "weather", this.weather)
+        .subscribe({
+          next: () => {
+            this.setAllValues = false;
+            this.getForecasts();
+            this.modalRef?.close();
+          },
+        });
+    }
   }
 
   getForecasts() {
@@ -96,27 +127,18 @@ export class ModifyDataComponent {
   }
 
   editForecast(weather: Weather, editmodal: any) {
-    Object.assign(this.weather, weather);
-    this.modalService.open(editmodal).result.then(
-      () => {
-        this.http
-          .put<Weather>(this.baseUrl + "weather", this.weather)
-          .subscribe({
-            next: () => {
-              this.getForecasts();
-            },
-          });
-      },
-      () => {}
-    );
+    this.weather = weather;
+    this.edit = true;
+    this.modalRef = this.modalService.open(editmodal);
   }
 
-  deleteForecast(weather: Weather) {
+  deleteForecast() {
     this.http
-      .delete<Weather>(this.baseUrl + "weather/Delete/" + weather.id)
+      .delete<Weather>(this.baseUrl + "weather/Delete/" + this.weather.id)
       .subscribe({
         next: () => {
           this.getForecasts();
+          this.modalRef?.close();
         },
       });
   }
